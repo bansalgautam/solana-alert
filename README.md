@@ -1,1 +1,1 @@
-# solana-alert
+# Solana Alerts
