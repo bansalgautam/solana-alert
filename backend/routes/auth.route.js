@@ -51,6 +51,7 @@ authRouter.post("/signup", async (req, res, next) => {
       httpOnly: true,
       expires: new Date(Date.now() + REFRESH_EXPIRATION_TIME),
       sameSite: "strict",
+      secure: process.env.NODE_ENV === "production",
     });
 
     const accessToken = generateAccessToken(newUser.id);
@@ -90,6 +91,7 @@ authRouter.post("/login", async (req, res, next) => {
       httpOnly: true,
       expires: new Date(Date.now() + REFRESH_EXPIRATION_TIME),
       sameSite: "strict",
+      secure: process.env.NODE_ENV === "production",
     });
 
     const accessToken = generateAccessToken(user.id);
