@@ -1,0 +1,2 @@
+-- AlterTable
+ALTER TABLE "Transaction" ALTER COLUMN "solAmount" SET DATA TYPE DOUBLE PRECISION;
