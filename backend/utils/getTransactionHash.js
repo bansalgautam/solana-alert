@@ -2,6 +2,7 @@ import { PublicKey } from "@solana/web3.js";
 import db from "../db/db.js";
 
 async function getTransactionHash(connection, address, slot, alertId) {
+  console.log("Slot number: ", slot);
   const accountPublicKey = new PublicKey(address);
   const signatures = await connection.getSignaturesForAddress(
     accountPublicKey,
