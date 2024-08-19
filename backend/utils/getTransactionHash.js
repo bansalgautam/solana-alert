@@ -12,7 +12,7 @@ async function getTransactionHash(connection, address, slot, alertId) {
 
   // Find the signature that matches the slot number
   const matchingSignature = signatures.find(
-    (signature) => signature.slot === slot || signature.slot === slot + 1
+    (signature) => signature.slot < slot + 5
   );
 
   if (matchingSignature) {
