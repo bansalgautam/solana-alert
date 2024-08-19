@@ -1,5 +1,6 @@
 import { PublicKey } from "@solana/web3.js";
 import db from "../db/db.js";
+import sendEmail from "./sendEmail.js";
 
 async function getTransactionHash(connection, address, slot, alertId) {
   console.log("Slot number: ", slot);
@@ -11,7 +12,7 @@ async function getTransactionHash(connection, address, slot, alertId) {
 
   // Find the signature that matches the slot number
   const matchingSignature = signatures.find(
-    (signature) => signature.slot === slot + 1
+    (signature) => signature.slot === slot || signature.slot === slot + 1
   );
 
   if (matchingSignature) {
@@ -27,17 +28,26 @@ async function getTransactionHash(connection, address, slot, alertId) {
       const postBalances = transaction.meta.postBalances;
 
       if (preBalances && postBalances) {
-        const balanceChange = preBalances[0] - postBalances[0];
+        const balanceChange = Math.abs(preBalances[0] - postBalances[0]);
         solAmount = balanceChange / 1e9; // Convert lamports to SOL
       }
     }
 
-    await db.transaction.create({
+    const trans = await db.transaction.create({
       data: {
         txHash: matchingSignature.signature,
         alertId,
         solAmount,
       },
+      include: { alert: { include: { user: true } } },
+    });
+
+    await sendEmail({
+      txHash: trans.txHash,
+      alertId: trans.alertId,
+      solAmount: trans.solAmount,
+      email: trans.alert.user.email,
+      time: trans.transactionReportedAt,
     });
   } else {
     console.log("No matching transaction found for the slot.");
